@@ -5,9 +5,6 @@ import { verifyAdmin, verifyUser } from '../utils/verifyToken.js';
 
 const router = express.Router()
 
-//create a new Users 
-
-//update a Users 
 
 router.put("/:id",verifyUser, updateUser);
 //delete a Users
