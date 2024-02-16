@@ -52,7 +52,7 @@ export const findUser = async (req, res) => {
 
 export const findAllUsers = async (req, res) => {
     const allUsers = await User.find({});
-    
+
     if (allUsers.length > 0) {
         res.status(200).json({
             success: true,
@@ -63,6 +63,52 @@ export const findAllUsers = async (req, res) => {
         res.status(404).json({
             success: false,
             message: 'No users available'
+        });
+    }
+};
+//FINDING ALL ONLINE USERS
+
+export const findAllOnlineUsers = async (req, res) => {
+    try {
+        // Find users where the online status is true
+        const onlineUsers = await User.find({ online: true });
+        if (onlineUsers.length > 0) {
+            res.status(200).json({
+                success: true,
+                message: 'Online users available',
+                data: onlineUsers
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: 'No online users available'
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch online users'
+            
+        });
+    }
+};
+//UPDATING USERONLINE STATUS
+
+export const updateUserStatus = async (req, res) => {
+    const userId = req.params.id;
+    const { online } = req.body; // Assuming you'll send the online status in the request body
+    try {
+        const updatedUser = await User.findByIdAndUpdate(userId, { $set: { online } }, { new: true });
+        res.status(200).json({
+            success: true,
+            message: "Successfully updated user",
+            data: updatedUser
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to update user'
         });
     }
 };

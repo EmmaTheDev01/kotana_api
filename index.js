@@ -3,7 +3,7 @@ import dotenv from "dotenv"
 import mongoose from "mongoose"
 import cors from "cors"
 import cookieParser from "cookie-parser"
-// import bodyParser from "body-parser"
+import bodyParser from "body-parser"
 import AuthRoute from './routes/auth.js'
 import ScoreRoute from './routes/score.js'
 import UserRoute from './routes/users.js'
@@ -36,9 +36,10 @@ mongoose.connection.on("connected", () => {
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
+app.use(bodyParser.json());
 app.use("/api/auth", AuthRoute)
 app.use("/api/score", ScoreRoute)
-app.use("/api/users", UserRoute)
+app.use("/api/user", UserRoute)
 app.use("/api/game", GameRoute);
 
 

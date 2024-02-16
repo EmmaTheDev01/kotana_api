@@ -1,20 +1,25 @@
 import express from 'express';
-import { deleteUser, findAllUsers, findUser, updateUser } from '../controllers/userController.js';
+import { deleteUser, findAllOnlineUsers, findAllUsers, findUser, updateUser, updateUserStatus } from '../controllers/userController.js';
 import { verifyAdmin, verifyUser } from '../utils/verifyToken.js';
 
 
 const router = express.Router()
 
+//UDATE USER DETAILS
+router.put("/:id", verifyUser, updateUser);
 
-router.put("/:id",verifyUser, updateUser);
-//delete a Users
+//DELETE A USER
+router.delete("/:id", verifyUser, deleteUser);
 
-router.delete("/:id",verifyUser, deleteUser);
-//find a Users
-
+//FIND ONE USER
 router.get("/:id", findUser);
-//find  all Users
+//GET ONLINE USERS
+router.get("/online", findAllOnlineUsers);
 
+//SET ONLINE STATUS
+router.put("/:id/online", verifyUser, updateUserStatus);
+
+//FIND ALL USERS
 router.get("/", verifyAdmin, findAllUsers);
 
 

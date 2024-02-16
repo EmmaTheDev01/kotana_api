@@ -5,14 +5,15 @@ import jwt from "jsonwebtoken";
 // User registration controllers
 export const register = async (req, res) => {
   try {
-    const { username, email, password, photo } = req.body;
+    const { firstname, lastname, email, password } = req.body;
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
     const newUser = new User({
-      username,
+      firstname,
+      lastname,
       email,
       password: hash,
-      photo,
+
     });
     await newUser.save();
     res.status(200).json({
@@ -39,9 +40,6 @@ export const login = async (req, res) => {
       });
     }
     //if the user exist and the password is valid
-
-    //compare password from your hash
-
     const checkCorrectPassword = await bcrypt.compare(
       req.body.password,
       user.password
@@ -54,10 +52,14 @@ export const login = async (req, res) => {
         message: "Invalid credentials",
       });
     }
+
+    // Set the user's online status to true
+    user.online = true;
+    await user.save(); // Save the updated user
+
     const { password, role, ...rest } = user._doc;
 
     //create a jwt token
-
     const token = jwt.sign(
       {
         id: user._id,
