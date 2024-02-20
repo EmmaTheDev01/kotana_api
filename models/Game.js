@@ -3,12 +3,16 @@
 import mongoose from 'mongoose';
 
 const gameSchema = new mongoose.Schema({
-  players: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
-  ],
+  playerOne: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  playerTwo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
   scores: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -28,7 +32,7 @@ const gameSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-},{timestamps: true});
+}, { timestamps: true });
 
 const Game = mongoose.model('Game', gameSchema);
 

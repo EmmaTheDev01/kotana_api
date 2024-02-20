@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 
-
+//UPDATING USER DETAILS
 export const updateUser = async (req, res) => {
     const userId = req.params.id;
     try {
@@ -17,6 +17,7 @@ export const updateUser = async (req, res) => {
         });
     }
 };
+//DELETE A USER
 export const deleteUser = async (req, res) => {
     const userId = req.params.id;
     try {
@@ -32,7 +33,7 @@ export const deleteUser = async (req, res) => {
         });
     }
 };
-
+//FINDING A SINGLE USER
 export const findUser = async (req, res) => {
     const userId = req.params.id;
     try {
@@ -49,7 +50,7 @@ export const findUser = async (req, res) => {
         });
     }
 };
-
+//RETRIEVE ALL USERS
 export const findAllUsers = async (req, res) => {
     const allUsers = await User.find({});
 
@@ -89,7 +90,7 @@ export const findAllOnlineUsers = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Failed to fetch online users'
-            
+
         });
     }
 };

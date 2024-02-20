@@ -69,30 +69,46 @@ export const joinGame = async (req, res) => {
         const currentPlayerId = req.user.id;
         const gameId = req.params.gameId;
 
-        // Find the game by ID and update the players array
-        const updatedGame = await Game.findByIdAndUpdate(
-            gameId,
-            { $addToSet: { players: currentPlayerId } }, // Add the current player if not already in the array
-            { new: true } // Return the updated document
-        );
+        // Find the game by ID
+        const game = await Game.findById(gameId);
 
-        if (!updatedGame) {
+        if (!game) {
             return res.status(404).json({
                 success: false,
                 message: 'Game not found',
             });
         }
 
-        // Check if the game now has two players, then start the game
-        if (updatedGame.players.length === 2) {
-            updatedGame.status = 'ongoing';
-            await updatedGame.save();
+        // Check if the game already has two players
+        if (game.players.length >= 2) {
+            return res.status(400).json({
+                success: false,
+                message: 'Game is already full',
+            });
         }
+
+        // Check if the current player is already in the game
+        if (game.players.includes(currentPlayerId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'You are already in the game',
+            });
+        }
+
+        // Add the current player to the game
+        game.players.push(currentPlayerId);
+
+        // Check if the game now has two players, then start the game
+        if (game.players.length === 2) {
+            game.status = 'ongoing';
+        }
+
+        await game.save();
 
         res.status(200).json({
             success: true,
             message: 'Successfully joined the game',
-            updatedGame,
+            updatedGame: game,
         });
     } catch (error) {
         console.error(error);
@@ -102,7 +118,6 @@ export const joinGame = async (req, res) => {
         });
     }
 };
-
 // Controller function to update the score within a game
 export const updateScore = async (req, res) => {
     try {
