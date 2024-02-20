@@ -27,7 +27,7 @@ export const register = async (req, res) => {
     });
   }
 };
-//User authentication controllers
+// User login controllers
 export const login = async (req, res) => {
   const email = req.body.email;
   try {
@@ -53,14 +53,22 @@ export const login = async (req, res) => {
       });
     }
 
-    // Set the user's online status to true
-    user.online = true;
-    await user.save(); // Save the updated user
+    // Check if the token is available in the request cookies
+    const token = req.cookies.accessToken;
+    if (token) {
+      // Decode the token to get the user ID
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const userId = decoded.id;
+
+      // Update the user's online status to true
+      user.online = true;
+      await user.save(); // Save the updated user
+    }
 
     const { password, role, ...rest } = user._doc;
 
     //create a jwt token
-    const token = jwt.sign(
+    const newToken = jwt.sign(
       {
         id: user._id,
         role: user.role,
@@ -71,13 +79,13 @@ export const login = async (req, res) => {
 
     //Set token into the browser as cookies
     res
-      .cookie("accessToken", token, {
+      .cookie("accessToken", newToken, {
         httpOnly: true,
         expires: token.expiresIn,
       })
       .status(200)
       .json({
-        token,
+        token: newToken,
         data: { ...rest },
         role,
       });
