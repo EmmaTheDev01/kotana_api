@@ -8,6 +8,9 @@ const scoreSchema = new mongoose.Schema({
     score: {
         type: Number,
         required: true
+    },
+    gameId: {
+        type: mongoose.Types.ObjectId,
     }
 },
     { timestamps: true }

@@ -54,7 +54,7 @@ export const login = async (req, res) => {
     }
 
     // Set the user's online status to true
-    user.online = true;
+    
     await user.save(); // Save the updated user
 
     const { password, role, ...rest } = user._doc;
@@ -85,6 +85,33 @@ export const login = async (req, res) => {
     res.status(401).json({
       success: false,
       message: "Login failed",
+    });
+  }
+};
+
+// User logout controller
+export const logout = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    // Set the user's online status to false
+    user.online = false;
+    await user.save(); // Save the updated user
+    res.status(200).json({
+      success: true,
+      message: "Logout successful",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
     });
   }
 };
