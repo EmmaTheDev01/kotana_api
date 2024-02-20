@@ -1,18 +1,13 @@
-// game.js
-
 import mongoose from 'mongoose';
+import { generateRandomCode } from '../utils.js';
 
 const gameSchema = new mongoose.Schema({
-  playerOne: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  playerTwo: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
+  players: [
+    [
+      { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    ]
+  ],
   scores: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -27,6 +22,11 @@ const gameSchema = new mongoose.Schema({
   winner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+  },
+  code: {
+    type: String,
+    required: true,
+    default: () => generateRandomCode(),
   },
   createdAt: {
     type: Date,

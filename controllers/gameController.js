@@ -1,9 +1,8 @@
 // gameController.js
-
+import { generateRandomCode } from '../utils.js';
 import Game from '../models/Game.js';
 import Score from '../models/Score.js';
 import User from '../models/User.js';
-
 // Controller function to create a new game
 export const createGame = async (req, res) => {
     try {
@@ -22,13 +21,17 @@ export const createGame = async (req, res) => {
             });
         }
 
-        // Create a new game with the current player as the first participant
-        const newGame = await Game.create({ players: [currentPlayerId] });
+        // Generate a random code for the game
+        const gameCode = generateRandomCode();
+
+        // Create a new game with an empty players array and the generated code
+        const newGame = await Game.create({ players: [], code: gameCode });
 
         res.status(201).json({
             success: true,
             message: 'Game created successfully',
             gameId: newGame._id,
+            gameCode,
         });
     } catch (error) {
         console.error(error);
@@ -38,39 +41,14 @@ export const createGame = async (req, res) => {
         });
     }
 };
-
-// Controller function to retrieve available games for a user to join
-export const getAvailableGames = async (req, res) => {
+// Controller function to join an existing game with a code
+export const joinGameWithCode = async (req, res) => {
     try {
         const currentPlayerId = req.user.id;
+        const { gameCode } = req.body;
 
-        // Find games with status 'pending' that do not already have the current player
-        const availableGames = await Game.find({
-            status: 'pending',
-            players: { $ne: currentPlayerId },
-        });
-
-        res.status(200).json({
-            success: true,
-            games: availableGames,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
-    }
-};
-
-// Controller function to join an existing game
-export const joinGame = async (req, res) => {
-    try {
-        const currentPlayerId = req.user.id;
-        const gameId = req.params.gameId;
-
-        // Find the game by ID
-        const game = await Game.findById(gameId);
+        // Find the game by code
+        const game = await Game.findOne({ code: gameCode });
 
         if (!game) {
             return res.status(404).json({
@@ -88,7 +66,7 @@ export const joinGame = async (req, res) => {
         }
 
         // Check if the current player is already in the game
-        if (game.players.includes(currentPlayerId)) {
+        if (game.players.flat().includes(currentPlayerId)) {
             return res.status(400).json({
                 success: false,
                 message: 'You are already in the game',
@@ -118,6 +96,7 @@ export const joinGame = async (req, res) => {
         });
     }
 };
+
 // Controller function to update the score within a game
 export const updateScore = async (req, res) => {
     try {
@@ -175,6 +154,30 @@ export const updateScore = async (req, res) => {
     }
 };
 
+// Controller function to retrieve available games for a user to join
+export const getAvailableGames = async (req, res) => {
+    try {
+        const currentPlayerId = req.user.id;
+
+        // Find games with status 'pending' that do not already have the current player
+        const availableGames = await Game.find({
+            status: 'pending',
+            players: { $ne: currentPlayerId },
+        });
+
+        res.status(200).json({
+            success: true,
+            games: availableGames,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};
+
 // Controller function to get game details, including scores of players
 export const getGameDetails = async (req, res) => {
     try {
@@ -202,5 +205,3 @@ export const getGameDetails = async (req, res) => {
         });
     }
 };
-
-
