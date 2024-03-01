@@ -66,7 +66,7 @@ export const login = async (req, res) => {
         role: user.role,
       },
       process.env.JWT_SECRET_KEY,
-      { expiresIn: "15d" }
+      { expiresIn: "1d" }
     );
 
     //Set token into the browser as cookies

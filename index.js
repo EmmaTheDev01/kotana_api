@@ -33,6 +33,15 @@ mongoose.connection.on("connected", () => {
 })
 
 //middlewares 
+// Add the following middleware to your Express app
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'http:/localhost:8080'); // Update this with your frontend URL
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true'); // Set the header to allow credentials
+    next();
+});
+
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());

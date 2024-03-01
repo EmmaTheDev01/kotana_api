@@ -68,7 +68,6 @@ export const findAllUsers = async (req, res) => {
     }
 };
 //FINDING ALL ONLINE USERS
-
 export const findAllOnlineUsers = async (req, res) => {
     try {
         // Find users where the online status is true
@@ -96,20 +95,32 @@ export const findAllOnlineUsers = async (req, res) => {
 };
 //UPDATING USERONLINE STATUS
 
-export const updateUserStatus = async (req, res) => {
-    const userId = req.params.id;
-    const { online } = req.body; // Assuming you'll send the online status in the request body
+// Update user's online status controllers
+// Update user's online status controllers
+export const updateOnlineStatus = async (req, res) => {
+    const userId = req.user.id; // Assuming you have a middleware to extract user information from the JWT
+
     try {
-        const updatedUser = await User.findByIdAndUpdate(userId, { $set: { online } }, { new: true });
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found!",
+            });
+        }
+
+        user.online = false;
+        await user.save();
+
         res.status(200).json({
             success: true,
-            message: "Successfully updated user",
-            data: updatedUser
+            message: "User online status updated successfully",
         });
     } catch (err) {
         res.status(500).json({
             success: false,
-            message: 'Failed to update user'
+            message: "Failed to update user online status",
         });
     }
 };
+

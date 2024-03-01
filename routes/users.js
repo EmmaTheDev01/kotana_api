@@ -1,11 +1,11 @@
 import express from 'express';
-import { deleteUser, findAllOnlineUsers, findAllUsers, findUser, updateUser, updateUserStatus } from '../controllers/userController.js';
+import { deleteUser, findAllOnlineUsers, findAllUsers, findUser, updateOnlineStatus, updateUser } from '../controllers/userController.js';
 import { verifyAdmin, verifyUser } from '../utils/verifyToken.js';
 
 const router = express.Router();
 
 // GET ONLINE USERS
-router.get("/online",verifyUser, findAllOnlineUsers);
+router.get("/online", findAllOnlineUsers);
 
 // UDATE USER DETAILS
 router.put("/:id", verifyUser, updateUser);
@@ -17,7 +17,7 @@ router.delete("/:id", verifyAdmin, deleteUser);
 router.get("/:id",verifyUser, findUser);
 
 // SET ONLINE STATUS
-router.put("/online/:id", verifyUser, updateUserStatus);
+router.put("/online/remove",verifyUser, updateOnlineStatus);
 
 // FIND ALL USERS
 router.get("/",verifyAdmin, findAllUsers);
