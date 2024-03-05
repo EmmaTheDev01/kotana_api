@@ -13,7 +13,6 @@ export const register = async (req, res) => {
       lastname,
       email,
       password: hash,
-
     });
     await newUser.save();
     res.status(200).json({
@@ -27,25 +26,24 @@ export const register = async (req, res) => {
     });
   }
 };
-//User authentication controllers
+
+// User authentication controllers
 export const login = async (req, res) => {
   const email = req.body.email;
   try {
     const user = await User.findOne({ email });
-    //if user does not exist
     if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found!",
       });
     }
-    //if the user exist and the password is valid
+
     const checkCorrectPassword = await bcrypt.compare(
       req.body.password,
       user.password
     );
 
-    //if password is incorrect
     if (!checkCorrectPassword) {
       return res.status(401).json({
         success: false,
@@ -53,13 +51,11 @@ export const login = async (req, res) => {
       });
     }
 
-    // Set the user's online status to true
     user.online = true;
-    await user.save(); // Save the updated user
+    await user.save();
 
     const { password, role, ...rest } = user._doc;
 
-    //create a jwt token
     const token = jwt.sign(
       {
         id: user._id,
@@ -69,11 +65,10 @@ export const login = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    //Set token into the browser as cookies
     res
       .cookie("accessToken", token, {
         httpOnly: true,
-        expires: token.expiresIn,
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day expiry
       })
       .status(200)
       .json({

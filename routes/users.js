@@ -17,7 +17,7 @@ router.delete("/:id", verifyAdmin, deleteUser);
 router.get("/:id",verifyUser, findUser);
 
 // SET ONLINE STATUS
-router.put("/online/remove",verifyUser, updateOnlineStatus);
+router.put("/online/reset", updateOnlineStatus);
 
 // FIND ALL USERS
 router.get("/",verifyAdmin, findAllUsers);

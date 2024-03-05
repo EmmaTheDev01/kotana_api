@@ -94,9 +94,6 @@ export const findAllOnlineUsers = async (req, res) => {
     }
 };
 //UPDATING USERONLINE STATUS
-
-// Update user's online status controllers
-// Update user's online status controllers
 export const updateOnlineStatus = async (req, res) => {
     const userId = req.user.id; // Assuming you have a middleware to extract user information from the JWT
 
@@ -123,4 +120,3 @@ export const updateOnlineStatus = async (req, res) => {
         });
     }
 };
-
