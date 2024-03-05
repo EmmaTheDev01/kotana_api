@@ -33,14 +33,24 @@ mongoose.connection.on("connected", () => {
 })
 
 //middlewares 
-// Add the following middleware to your Express app
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'http:/localhost:8080'); // Update this with your frontend URL
+    res.header('Access-Control-Allow-Origin', 'http://localhost:8080', 'https://kotana-api.onrender.com'); // Update this with your frontend URL
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization', 'Origin, X-Requested-With, Content-Type, Accept');
     res.header('Access-Control-Allow-Credentials', 'true'); // Set the header to allow credentials
+
+    // Pass the access token in the response data
+    res.sendToken = (token) => {
+        res.json({
+            success: true,
+            message: 'Token sent',
+            token: token
+        });
+    };
+
     next();
 });
+
 
 app.use(express.json());
 app.use(cors(corsOptions));
