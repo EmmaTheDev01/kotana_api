@@ -3,10 +3,8 @@ import { generateRandomCode } from '../utils.js';
 
 const gameSchema = new mongoose.Schema({
   players: [
-    [
-      { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-      { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-    ]
+    { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
   ],
   scores: [
     {

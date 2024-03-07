@@ -16,10 +16,10 @@ const router = express.Router();
 router.use(verifyToken);
 
 // Routes for games
-router.post('/create',verifyUser, createGame);
+router.post('/create', verifyUser, createGame);
 router.get('/available', getAvailableGames);
-router.post('/join/:gameId', joinGameWithCode);
-router.post('/update-score/:gameId', updateScore);
-router.get('/:gameId', getGameDetails);
+router.put('/join/:id', joinGameWithCode);
+router.post('/update-score/:id', updateScore);
+router.get('/:id', getGameDetails);
 
 export default router;

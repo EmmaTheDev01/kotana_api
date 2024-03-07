@@ -3,6 +3,7 @@ import { generateRandomCode } from '../utils.js';
 import Game from '../models/Game.js';
 import Score from '../models/Score.js';
 import User from '../models/User.js';
+
 // Controller function to create a new game
 export const createGame = async (req, res) => {
     try {
@@ -22,17 +23,16 @@ export const createGame = async (req, res) => {
         }
 
         // Generate a random code for the game
-        const gameCode = generateRandomCode();
+        const code = generateRandomCode();
 
         // Create a new game with the logged-in player as player one and the generated code
-        const newGame = await Game.create({ players: [currentPlayerId], code: gameCode });
-
+        const newGame = await Game.create({ players: [currentPlayerId], code: code });
 
         res.status(201).json({
             success: true,
             message: 'Game created successfully',
             gameId: newGame._id,
-            gameCode,
+            code,
         });
     } catch (error) {
         console.error(error);
@@ -42,14 +42,15 @@ export const createGame = async (req, res) => {
         });
     }
 };
+
 // Controller function to join an existing game with a code
 export const joinGameWithCode = async (req, res) => {
     try {
         const currentPlayerId = req.user.id;
-        const { gameCode } = req.body;
+        const { code } = req.body;
 
         // Find the game by code
-        const game = await Game.findOne({ code: gameCode });
+        const game = await Game.findOne({ code: code });
 
         if (!game) {
             return res.status(404).json({
@@ -58,23 +59,15 @@ export const joinGameWithCode = async (req, res) => {
             });
         }
 
-        // Check if the game already has two players
-        if (game.players.length >= 2) {
-            return res.status(400).json({
-                success: false,
-                message: 'Game is already full',
-            });
-        }
-
         // Check if the current player is already in the game
-        if (game.players.flat().includes(currentPlayerId)) {
+        if (game.players.includes(currentPlayerId)) {
             return res.status(400).json({
                 success: false,
                 message: 'You are already in the game',
             });
         }
 
-        // Add the current player to the game
+        // Add the current player to the game as player 2
         game.players.push(currentPlayerId);
 
         // Check if the game now has two players, then start the game
@@ -97,6 +90,7 @@ export const joinGameWithCode = async (req, res) => {
         });
     }
 };
+
 
 // Controller function to update the score within a game
 export const updateScore = async (req, res) => {
