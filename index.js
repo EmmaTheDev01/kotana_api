@@ -38,16 +38,6 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization', 'Origin, X-Requested-With, Content-Type, Accept');
     res.header('Access-Control-Allow-Credentials', 'true'); // Set the header to allow credentials
-
-    // Pass the access token in the response data
-    res.sendToken = (token) => {
-        res.json({
-            success: true,
-            message: 'Token sent',
-            token: token
-        });
-    };
-
     next();
 });
 

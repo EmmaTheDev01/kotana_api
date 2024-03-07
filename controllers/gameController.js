@@ -24,8 +24,9 @@ export const createGame = async (req, res) => {
         // Generate a random code for the game
         const gameCode = generateRandomCode();
 
-        // Create a new game with an empty players array and the generated code
-        const newGame = await Game.create({ players: [], code: gameCode });
+        // Create a new game with the logged-in player as player one and the generated code
+        const newGame = await Game.create({ players: [currentPlayerId], code: gameCode });
+
 
         res.status(201).json({
             success: true,

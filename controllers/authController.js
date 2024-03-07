@@ -6,6 +6,22 @@ import jwt from "jsonwebtoken";
 export const register = async (req, res) => {
   try {
     const { firstname, lastname, email, password } = req.body;
+
+    if (!firstname || !lastname || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields",
+      });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Email address is already in use",
+      });
+    }
+
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
     const newUser = new User({
@@ -14,18 +30,22 @@ export const register = async (req, res) => {
       email,
       password: hash,
     });
+
     await newUser.save();
+
     res.status(200).json({
       success: true,
       message: "User registered successfully",
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({
       success: false,
       message: "Failed to create a user, try again",
     });
   }
 };
+
 
 // User authentication controllers
 export const login = async (req, res) => {

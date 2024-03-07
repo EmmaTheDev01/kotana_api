@@ -8,7 +8,7 @@ import {
   getGameDetails,
   joinGameWithCode,
 } from '../controllers/gameController.js'; // Adjust the path based on your project structure
-import { verifyToken } from '../utils/verifyToken.js'; // Adjust the path based on your project structure
+import { verifyToken, verifyUser } from '../utils/verifyToken.js'; // Adjust the path based on your project structure
 
 const router = express.Router();
 
@@ -16,7 +16,7 @@ const router = express.Router();
 router.use(verifyToken);
 
 // Routes for games
-router.post('/create', createGame);
+router.post('/create',verifyUser, createGame);
 router.get('/available', getAvailableGames);
 router.post('/join/:gameId', joinGameWithCode);
 router.post('/update-score/:gameId', updateScore);
