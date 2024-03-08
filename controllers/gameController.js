@@ -5,6 +5,8 @@ import Score from '../models/Score.js';
 import User from '../models/User.js';
 
 // Controller function to create a new game
+
+// Controller function to create a new game
 export const createGame = async (req, res) => {
     try {
         const currentPlayerId = req.user.id;
@@ -150,8 +152,17 @@ export const updateScore = async (req, res) => {
 };
 
 // Controller function to retrieve available games for a user to join
+// Controller function to retrieve available games for a user to join
 export const getAvailableGames = async (req, res) => {
     try {
+        // Ensure that req.user is properly set
+        if (!req.user || !req.user.id) {
+            return res.status(400).json({
+                success: false,
+                message: 'User not authenticated',
+            });
+        }
+
         const currentPlayerId = req.user.id;
 
         // Find games with status 'pending' that do not already have the current player
