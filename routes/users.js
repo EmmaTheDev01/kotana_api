@@ -5,7 +5,7 @@ import { verifyAdmin, verifyUser } from '../utils/verifyToken.js';
 const router = express.Router();
 
 // GET ONLINE USERS
-router.get("/online", findAllOnlineUsers);
+router.get("/online", verifyUser, findAllOnlineUsers);
 
 // UDATE USER DETAILS
 router.put("/:id", verifyUser, updateUser);
@@ -14,12 +14,12 @@ router.put("/:id", verifyUser, updateUser);
 router.delete("/:id", verifyAdmin, deleteUser);
 
 // FIND ONE USER
-router.get("/:id",verifyUser, findUser);
+router.get("/:id", verifyUser, findUser);
 
 // SET ONLINE STATUS
-router.put("/online/reset",verifyUser, updateOnlineStatus);
+router.put("/online/reset", verifyUser, updateOnlineStatus);
 
 // FIND ALL USERS
-router.get("/",verifyAdmin, findAllUsers);
+router.get("/", verifyAdmin, findAllUsers);
 
 export default router;

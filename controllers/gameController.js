@@ -150,9 +150,6 @@ export const updateScore = async (req, res) => {
         });
     }
 };
-
-// Controller function to retrieve available games for a user to join
-// Controller function to retrieve available games for a user to join
 export const getAvailableGames = async (req, res) => {
     try {
         // Ensure that req.user is properly set
@@ -171,6 +168,9 @@ export const getAvailableGames = async (req, res) => {
             players: { $ne: currentPlayerId },
         });
 
+        console.log('Current Player ID:', currentPlayerId);
+        console.log('Available Games:', availableGames);
+
         res.status(200).json({
             success: true,
             games: availableGames,
@@ -183,6 +183,7 @@ export const getAvailableGames = async (req, res) => {
         });
     }
 };
+
 
 // Controller function to get game details, including scores of players
 export const getGameDetails = async (req, res) => {
@@ -202,6 +203,38 @@ export const getGameDetails = async (req, res) => {
         res.status(200).json({
             success: true,
             gameDetails,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};
+
+// Controller function to delete the game when a user logs out
+export const revokeGame = async (req, res) => {
+    try {
+        const currentPlayerId = req.user.id;
+
+        // Find the game that the user is part of and delete it
+        const deletedGame = await Game.findOneAndDelete({
+            players: currentPlayerId,
+            status: { $in: ['pending', 'ongoing'] },
+        });
+
+        if (!deletedGame) {
+            return res.status(404).json({
+                success: false,
+                message: 'Game not found',
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Game deleted successfully',
+            deletedGame,
         });
     } catch (error) {
         console.error(error);

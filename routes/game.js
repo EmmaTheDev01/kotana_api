@@ -7,6 +7,7 @@ import {
   updateScore,
   getGameDetails,
   joinGameWithCode,
+  revokeGame,
 } from '../controllers/gameController.js'; // Adjust the path based on your project structure
 import { verifyToken, verifyUser } from '../utils/verifyToken.js'; // Adjust the path based on your project structure
 
@@ -17,9 +18,10 @@ router.use(verifyToken);
 
 // Routes for games
 router.post('/create', verifyUser, createGame);
-router.get('/available',verifyUser, getAvailableGames);
-router.put('/join/:id',verifyUser, joinGameWithCode);
-router.post('/update-score/:id',verifyUser, updateScore);
-router.get('/:id',verifyUser, getGameDetails);
+router.get('/available', verifyUser, getAvailableGames);
+router.put('/join/:id', verifyUser, joinGameWithCode);
+router.post('/update-score/:id', verifyUser, updateScore);
+router.get('/:id', verifyUser, getGameDetails);
+router.delete('/:id', verifyUser, revokeGame);
 
 export default router;
