@@ -5,8 +5,6 @@ import Score from '../models/Score.js';
 import User from '../models/User.js';
 
 // Controller function to create a new game
-
-// Controller function to create a new game
 export const createGame = async (req, res) => {
     try {
         const currentPlayerId = req.user.id;
