@@ -22,6 +22,6 @@ router.get('/available', verifyUser, getAvailableGames);
 router.put('/join/:id', verifyUser, joinGameWithCode);
 router.post('/update-score/:id', verifyUser, updateScore);
 router.get('/:id', verifyUser, getGameDetails);
-router.delete('/:id', verifyUser, revokeGame);
+router.delete('/delete/:id', verifyUser, revokeGame);
 
 export default router;
