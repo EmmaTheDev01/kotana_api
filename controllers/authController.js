@@ -46,6 +46,8 @@ export const register = async (req, res) => {
   }
 };
 
+
+// User authentication controllers
 export const login = async (req, res) => {
   const email = req.body.email;
   try {
@@ -53,7 +55,7 @@ export const login = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "User not found!",
       });
     }
 
@@ -65,7 +67,7 @@ export const login = async (req, res) => {
     if (!checkCorrectPassword) {
       return res.status(401).json({
         success: false,
-        message: "Incorrect email or password",
+        message: "Invalid credentials",
       });
     }
 
@@ -87,8 +89,6 @@ export const login = async (req, res) => {
       .cookie("accessToken", token, {
         httpOnly: true,
         expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day expiry
-        secure: true, // Secure attribute
-        sameSite: 'Lax' // SameSite attribute
       })
       .status(200)
       .json({
@@ -97,10 +97,9 @@ export const login = async (req, res) => {
         role,
       });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({
+    res.status(401).json({
       success: false,
-      message: "An error occurred, please try again later",
+      message: "Login failed",
     });
   }
 };
