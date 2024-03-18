@@ -3,8 +3,14 @@ import { generateRandomCode } from '../utils.js';
 
 const gameSchema = new mongoose.Schema({
   players: [
-    { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    { 
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      position: { type: String, enum: ['player 1', 'player 2'], required: true },
+    },
+    { 
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      position: { type: String, enum: ['player 1', 'player 2'], required: true },
+    }
   ],
   scores: [
     {
