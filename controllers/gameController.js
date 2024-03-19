@@ -15,8 +15,7 @@ export const createGame = async (req, res) => {
             });
         }
         const currentPlayerId = req.user.id;
-
-        // Check if the user is already in a game
+        console.log(currentPlayerId);
         const existingGame = await Game.findOne({
             players: currentPlayerId,
             status: { $in: ['pending', 'ongoing'] },
@@ -29,17 +28,16 @@ export const createGame = async (req, res) => {
             });
         }
 
-        // Generate a random code for the game
-        const code = generateRandomCode();
-
-        // Create a new game with the logged-in player as player one and the generated code
-        const newGame = await Game.create({ players: [currentPlayerId], code: code });
+        const newGame = await Game.create({
+            players: [{ userId: currentPlayerId, position: 'player 1' }],
+            status: 'pending',
+        });
 
         res.status(201).json({
             success: true,
             message: 'Game created successfully',
             gameId: newGame._id,
-            code,
+            code: newGame.code,
         });
     } catch (error) {
         console.error('Error creating game:', error);
@@ -172,7 +170,7 @@ export const getAvailableGames = async (req, res) => {
         const availableGames = await Game.find({
             status: 'pending',
             players: { $ne: currentPlayerId },
-        });
+        }).populate('players.userId', 'firstname lastname');
 
         console.log('Current Player ID:', currentPlayerId);
         console.log('Available Games:', availableGames);
