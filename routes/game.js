@@ -17,9 +17,9 @@ const router = express.Router();
 router.use(verifyToken);
 
 // Routes for games
-router.post('/create', verifyUser, createGame);
+router.post('/create', createGame);
 router.get('/available', getAvailableGames);
-router.put('/join/:id', verifyUser, joinGameWithCode);
+router.put('/join/:id', joinGameWithCode);
 router.post('/update-score/:id', verifyUser, updateScore);
 router.get('/:id', verifyUser, getGameDetails);
 router.delete('/delete/:id', verifyUser, revokeGame);

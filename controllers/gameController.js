@@ -7,6 +7,13 @@ import User from '../models/User.js';
 // Controller function to create a new game
 export const createGame = async (req, res) => {
     try {
+        // Ensure that req.user is properly set
+        if (!req.user || !req.user.id) {
+            return res.status(400).json({
+                success: false,
+                message: 'User not authenticated',
+            });
+        }
         const currentPlayerId = req.user.id;
 
         // Check if the user is already in a game
@@ -35,13 +42,14 @@ export const createGame = async (req, res) => {
             code,
         });
     } catch (error) {
-        console.error(error);
+        console.error('Error creating game:', error);
         res.status(500).json({
             success: false,
-            message: 'Internal server error',
+            message: 'Failed to create game',
         });
     }
 };
+
 
 // Controller function to join an existing game with a code
 export const joinGameWithCode = async (req, res) => {
