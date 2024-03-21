@@ -84,16 +84,18 @@ export const login = async (req, res) => {
       process.env.JWT_SECRET_KEY,
       { expiresIn: "1d" }
     );
-    res.cookie("accessToken", token, {
-      httpOnly: false, // Allow access from JavaScript
-      secure: true, // Transmit the cookie only over HTTPS
-      sameSite: "Strict", // Prevent cross-site request forgery (CSRF) attacks
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day expiry
-    }).status(200).json({
-      token,
-      data: { ...rest },
-      role,
-    });
+
+    res
+      .cookie("accessToken", token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day expiry
+      })
+      .status(200)
+      .json({
+        token,
+        data: { ...rest },
+        role,
+      });
   } catch (err) {
     res.status(401).json({
       success: false,
