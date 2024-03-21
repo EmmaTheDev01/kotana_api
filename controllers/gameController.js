@@ -148,12 +148,13 @@ export const updateScore = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({
+        res.status(500).json({ 
             success: false,
             message: 'Internal server error',
         });
     }
 };
+//getting all available games which are not full yet
 export const getAvailableGames = async (req, res) => {
     try {
         // Ensure that req.user is properly set
@@ -169,11 +170,13 @@ export const getAvailableGames = async (req, res) => {
         // Find games with status 'pending' that do not already have the current player
         const availableGames = await Game.find({
             status: 'pending',
-            players: { $ne: currentPlayerId },
+            players: { $not: { $size: 2 } }
         }).populate('players.userId', 'firstname lastname');
 
         console.log('Current Player ID:', currentPlayerId);
         console.log('Available Games:', availableGames);
+        console.log('Available Games Length:', availableGames.length);
+     
 
         res.status(200).json({
             success: true,
