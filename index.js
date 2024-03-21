@@ -41,13 +41,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
-
-// Set up CORS middleware
-app.use(cors({
-  origin: 'https://game.uwezogroupe.com',
-  credentials: true // Allow cookies to be sent and received
-}));
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
