@@ -8,18 +8,18 @@ const router = express.Router();
 router.get("/online", findAllOnlineUsers);
 
 // UDATE USER DETAILS
-router.put("/:id", verifyUser, updateUser);
+router.put("/:id", updateUser);
 
 // DELETE A USER
-router.delete("/:id", verifyAdmin, deleteUser);
+router.delete("/:id", deleteUser);
 
 // FIND ONE USER
-router.get("/:id", verifyUser, findUser);
+router.get("/:id", findUser);
 
 // SET ONLINE STATUS
-router.put("/online/reset", verifyUser, updateOnlineStatus);
+router.put("/online/reset", updateOnlineStatus);
 
 // FIND ALL USERS
-router.get("/", verifyAdmin, findAllUsers);
+router.get("/", findAllUsers);
 
 export default router;
