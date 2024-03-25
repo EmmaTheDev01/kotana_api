@@ -1,7 +1,6 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
 // User registration controllers
 export const register = async (req, res) => {
   try {
@@ -22,8 +21,7 @@ export const register = async (req, res) => {
       });
     }
 
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(password, salt);
+    const hash = await bcrypt.hash(password, 10);
     const newUser = new User({
       firstname,
       lastname,
@@ -38,14 +36,13 @@ export const register = async (req, res) => {
       message: "User registered successfully",
     });
   } catch (err) {
-    console.error(err);
+    // Use global error handling middleware for error handling
     res.status(500).json({
       success: false,
       message: "Failed to create a user, try again",
     });
   }
 };
-
 
 // User authentication controllers
 export const login = async (req, res) => {
@@ -74,35 +71,30 @@ export const login = async (req, res) => {
     user.online = true;
     await user.save();
 
-    const { password, role, ...rest } = user._doc;
+    const { _id, ...rest } = user._doc;
 
     const token = jwt.sign(
       {
         id: user._id,
-        role: user.role,
       },
       process.env.JWT_SECRET_KEY,
-      { expiresIn: "1d" }
+      { expiresIn: "1h" } // Change token expiry to 1 hour
     );
 
     // Save the token as a cookie
     res.cookie("accessToken", token, {
       httpOnly: true,
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day expiry
+      expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hour expiry
       secure: true, // Set the Secure flag
     });
-
-
-    // Save the token in local storage
-    localStorage.setItem("accessToken", token);
 
     res.status(200).json({
       token,
       data: { ...rest },
-      role,
     });
 
   } catch (err) {
+    // Use global error handling middleware for error handling
     res.status(401).json({
       success: false,
       message: "Login failed",
