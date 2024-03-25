@@ -46,6 +46,8 @@ export const register = async (req, res) => {
   }
 };
 
+
+// User authentication controllers
 export const login = async (req, res) => {
   const email = req.body.email;
   try {
@@ -82,9 +84,6 @@ export const login = async (req, res) => {
       process.env.JWT_SECRET_KEY,
       { expiresIn: "1d" }
     );
-
-    // Save the token in local storage
-    localStorage.setItem('accessToken', token);
 
     res
       .cookie("accessToken", token, {
