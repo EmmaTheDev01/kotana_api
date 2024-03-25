@@ -84,18 +84,24 @@ export const login = async (req, res) => {
       process.env.JWT_SECRET_KEY,
       { expiresIn: "1d" }
     );
-      const accessToken = localStorage.setItem("accessToken", token);
-    res
-      .cookie("accessToken", token, {
-        httpOnly: true,
-        expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day expiry
-      })
-      .status(200)
-      .json({
-        token,
-        data: { ...rest },
-        role,
-      });
+
+    // Save the token as a cookie
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day expiry
+      secure: true, // Set the Secure flag
+    });
+
+
+    // Save the token in local storage
+    localStorage.setItem("accessToken", token);
+
+    res.status(200).json({
+      token,
+      data: { ...rest },
+      role,
+    });
+
   } catch (err) {
     res.status(401).json({
       success: false,
