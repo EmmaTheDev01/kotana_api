@@ -84,7 +84,7 @@ export const login = async (req, res) => {
       process.env.JWT_SECRET_KEY,
       { expiresIn: "1d" }
     );
-
+      const accessToken = localStorage.setItem("accessToken", token);
     res
       .cookie("accessToken", token, {
         httpOnly: true,
