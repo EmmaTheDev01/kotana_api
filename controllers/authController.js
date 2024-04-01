@@ -86,6 +86,7 @@ export const login = async (req, res) => {
       httpOnly: true,
       expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hour expiry
       secure: true, // Set the Secure flag
+      sameSite: "none", // Set the SameSite flag
     });
 
     res.status(200).json({
