@@ -83,10 +83,10 @@ export const login = async (req, res) => {
 
     // Save the token as a cookie
     res.cookie("accessToken", token, {
-      httpOnly: true,
+      httpOnly: false, // Allow client-side access
       expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hour expiry
-      secure: true, // Set the Secure flag
-      sameSite: "none", // Set the SameSite flag
+      sameSite: "none",
+      secure: true, // Ensure the cookie is sent over HTTPS only
     });
 
     res.status(200).json({
