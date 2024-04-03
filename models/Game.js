@@ -5,11 +5,11 @@ const gameSchema = new mongoose.Schema({
   players: [
     {
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-      position: { type: String, enum: ['player 1', 'player 2'], required: true },
+      position: { type: String, enum: ['player 1', 'player 2'] },
     },
     {
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-      position: { type: String, enum: ['player 1', 'player 2'], required: true },
+      position: { type: String, enum: ['player 1', 'player 2'] },
     }
   ],
   scores: [
