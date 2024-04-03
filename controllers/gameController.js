@@ -3,7 +3,6 @@ import { generateRandomCode } from '../utils.js';
 import Game from '../models/Game.js';
 import Score from '../models/Score.js';
 import User from '../models/User.js';
-
 // Controller function to create a new game
 export const createGame = async (req, res) => {
     try {
@@ -14,11 +13,15 @@ export const createGame = async (req, res) => {
                 message: 'User not authenticated',
             });
         }
+
         const currentPlayerId = req.user.id;
-        console.log(currentPlayerId);
+
+        // Check if the current player is already in a game
         const existingGame = await Game.findOne({
-            players: currentPlayerId,
-            status: { $in: ['pending', 'ongoing'] },
+            $or: [
+                { 'players.0.userId': currentPlayerId, status: { $in: ['pending', 'ongoing'] } },
+                { 'players.1.userId': currentPlayerId, status: { $in: ['pending', 'ongoing'] } }
+            ]
         });
 
         if (existingGame) {
@@ -148,7 +151,7 @@ export const updateScore = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ 
+        res.status(500).json({
             success: false,
             message: 'Internal server error',
         });
@@ -176,7 +179,7 @@ export const getAvailableGames = async (req, res) => {
         console.log('Current Player ID:', currentPlayerId);
         console.log('Available Games:', availableGames);
         console.log('Available Games Length:', availableGames.length);
-     
+
 
         res.status(200).json({
             success: true,
