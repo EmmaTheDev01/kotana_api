@@ -15,8 +15,11 @@ const port = process.env.PORT
 
 const corsOptions = {
     origin: true,
-    Credentials: true,
-}
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
 const connectDatabase = async () => {
     try {
         await mongoose.connect(process.env.MONGO);
