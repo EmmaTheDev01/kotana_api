@@ -93,9 +93,9 @@ export const findAllOnlineUsers = async (req, res) => {
         });
     }
 };
-//UPDATING USERONLINE STATUS
+//UPDATING USER STATUS TO OFFLINE
 export const updateOnlineStatus = async (req, res) => {
-    const userId = req.user.id; // Assuming you have a middleware to extract user information from the JWT
+    const userId = req.user.id;
 
     try {
         const user = await User.findById(userId);
@@ -103,6 +103,13 @@ export const updateOnlineStatus = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: "User not found!",
+            });
+        }
+
+        if (!user.online) {
+            return res.status(200).json({
+                success: true,
+                message: "User is already offline",
             });
         }
 
@@ -120,3 +127,4 @@ export const updateOnlineStatus = async (req, res) => {
         });
     }
 };
+
