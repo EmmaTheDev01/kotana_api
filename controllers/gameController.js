@@ -50,8 +50,6 @@ export const createGame = async (req, res) => {
         });
     }
 };
-
-// Controller function to join an existing game with a code
 export const joinGameWithCode = async (req, res) => {
     try {
         const currentPlayerId = req.user.id;
@@ -75,13 +73,17 @@ export const joinGameWithCode = async (req, res) => {
             });
         }
 
-        // Add the current player to the game as player 2
-        game.players.push({ userId: currentPlayerId, position: 'player 2' });
-
-        // Check if the game now has two players, then start the game
-        if (game.players.length === 2) {
-            game.status = 'ongoing';
+        // Check if the game is full
+        if (game.players.length >= 2) {
+            return res.status(400).json({
+                success: false,
+                message: 'The game is full',
+            });
         }
+
+        // Update the game status and other details
+        game.status = 'ongoing'; // Update the game status to ongoing
+        game.players.push({ userId: currentPlayerId, position: 'player 2' });
 
         await game.save();
 
@@ -95,9 +97,11 @@ export const joinGameWithCode = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Internal server error',
+            error: error.message,
         });
     }
 };
+
 
 // Controller function to update the score within a game
 export const updateScore = async (req, res) => {
@@ -228,7 +232,7 @@ export const revokeGame = async (req, res) => {
 
         // Find the game that the user is part of and delete it
         const deletedGame = await Game.findOneAndDelete({
-            players: currentPlayerId,
+            'players.userId': currentPlayerId,
             status: { $in: ['pending', 'ongoing'] },
         });
 
