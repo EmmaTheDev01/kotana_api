@@ -53,7 +53,7 @@ export const createGame = async (req, res) => {
 export const joinGameWithCode = async (req, res) => {
     try {
         const currentPlayerId = req.user.id;
-        const { code } = req.body;
+        const { code } = req.params; // Extract the game code from the URL parameters
 
         // Find the game by code
         const game = await Game.findOne({ code: code });
@@ -110,17 +110,12 @@ export const updateScore = async (req, res) => {
         const gameId = req.params.gameId;
         const { score } = req.body;
 
-        // Create or update the score for the current player in the Score schema
-        let userScore = await Score.findOne({ user: currentPlayerId });
+        let userScore = await Score.findOneAndUpdate(
+            { user: currentPlayerId },
+            { user: currentPlayerId, score },
+            { upsert: true, new: true }
+        );
 
-        if (!userScore) {
-            userScore = await Score.create({ user: currentPlayerId, score });
-        } else {
-            userScore.score = score;
-            await userScore.save();
-        }
-
-        // Find the game by ID and update the score for the current player
         const updatedGame = await Game.findOneAndUpdate(
             { _id: gameId, players: currentPlayerId, status: 'ongoing' },
             { $addToSet: { scores: userScore._id } },
@@ -134,13 +129,8 @@ export const updateScore = async (req, res) => {
             });
         }
 
-        // Check for winning condition
-        const winningPlayerId = await Score.findOne({
-            _id: userScore._id,
-            score: { $gte: 70 },
-        });
-
-        if (winningPlayerId) {
+        const winningScore = 50;
+        if (score >= winningScore) {
             updatedGame.status = 'completed';
             updatedGame.winner = currentPlayerId;
             await updatedGame.save();

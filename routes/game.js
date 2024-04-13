@@ -19,7 +19,7 @@ router.use(verifyToken);
 // Routes for games
 router.post('/create', createGame);
 router.get('/available', getAvailableGames);
-router.put('/join/:id', joinGameWithCode);
+router.put('/join/:code', joinGameWithCode);
 router.post('/update-score/:id', updateScore);
 router.get('/:id', getGameDetails);
 router.delete('/delete/:id', revokeGame);

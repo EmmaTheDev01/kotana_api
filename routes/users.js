@@ -1,6 +1,5 @@
 import express from 'express';
 import { deleteUser, findAllOnlineUsers, findAllUsers, findUser, updateOnlineStatus, updateUser } from '../controllers/userController.js';
-import { verifyAdmin, verifyUser } from '../utils/verifyToken.js';
 
 const router = express.Router();
 
@@ -18,6 +17,7 @@ router.get("/:id", findUser);
 
 // SET ONLINE STATUS
 router.put("/online/reset", updateOnlineStatus);
+
 
 // FIND ALL USERS
 router.get("/", findAllUsers);
