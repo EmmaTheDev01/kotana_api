@@ -6,17 +6,13 @@ const gameSchema = new mongoose.Schema({
     {
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       position: { type: String, enum: ['player 1', 'player 2'], required: true },
+      score: { type: Number, default: 0 } // Score for the player
     },
     {
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       position: { type: String, enum: ['player 1', 'player 2'], required: true },
+      score: { type: Number, default: 0 } // Score for the player
     }
-  ],
-  scores: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Score',
-    },
   ],
   status: {
     type: String,
@@ -37,6 +33,7 @@ const gameSchema = new mongoose.Schema({
     default: Date.now,
   },
 }, { timestamps: true });
+
 
 const Game = mongoose.model('Game', gameSchema);
 
