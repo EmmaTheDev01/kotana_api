@@ -102,39 +102,58 @@ export const joinGameWithCode = async (req, res) => {
     }
 };
 
-
 // Controller function to update the score within a game
 export const updateScore = async (req, res) => {
     try {
         const currentPlayerId = req.user.id;
-        const gameId = req.params.gameId;
+        const code = req.params.code; // Use code instead of gameCode
         const { score } = req.body;
 
-        let userScore = await Score.findOneAndUpdate(
-            { user: currentPlayerId },
-            { user: currentPlayerId, score },
-            { upsert: true, new: true }
-        );
+        console.log('Current Player ID:', currentPlayerId);
+        console.log('Game Code:', code);
+        console.log('Score:', score);
 
-        const updatedGame = await Game.findOneAndUpdate(
-            { _id: gameId, players: currentPlayerId, status: 'ongoing' },
-            { $addToSet: { scores: userScore._id } },
-            { new: true }
-        );
-
-        if (!updatedGame) {
-            return res.status(404).json({
+        // Validate the score
+        if (typeof score !== 'number' || score < 0) {
+            return res.status(400).json({
                 success: false,
-                message: 'Game not found or not ongoing',
+                message: 'Invalid score value',
             });
         }
 
-        const winningScore = 50;
-        if (score >= winningScore) {
-            updatedGame.status = 'completed';
-            updatedGame.winner = currentPlayerId;
-            await updatedGame.save();
+        // Find the game by code
+        const game = await Game.findOne({ code: code });
+
+        console.log('Found Game:', game);
+
+        if (!game) {
+            return res.status(404).json({
+                success: false,
+                message: 'Game not found',
+            });
         }
+
+        // Find the player in the game's players array by their ID
+        const playerIndex = game.players.findIndex(player => player.userId.toString() === currentPlayerId.toString());
+
+        console.log('Player Index:', playerIndex);
+
+        if (playerIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                message: 'Player not found in the game',
+            });
+        }
+
+        // Update the player's score
+        game.players[playerIndex].score = score;
+
+        console.log('Updated Player Score:', game.players[playerIndex].score);
+
+        // Save the updated game
+        const updatedGame = await game.save();
+
+        console.log('Updated Game:', updatedGame);
 
         res.status(200).json({
             success: true,
@@ -149,6 +168,8 @@ export const updateScore = async (req, res) => {
         });
     }
 };
+
+
 //getting all available games which are not full yet
 export const getAvailableGames = async (req, res) => {
     try {
