@@ -206,58 +206,42 @@ export const getAvailableGames = async (req, res) => {
         });
     }
 };
-
-
-// Controller function to get game details, including scores of players
-export const getGameDetails = async (req, res) => {
-    try {
-        const gameId = req.params.gameId;
-
-        // Find the game by ID and populate player details
-        const gameDetails = await Game.findById(gameId).populate('players', 'username');
-
-        if (!gameDetails) {
-            return res.status(404).json({
-                success: false,
-                message: 'Game not found',
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            gameDetails,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
-    }
-};
-
 // Controller function to delete the game when a user logs out
 export const revokeGame = async (req, res) => {
     try {
         const currentPlayerId = req.user.id;
+        const { code } = req.params; // Extract the game code from the URL parameters
 
-        // Find the game that the user is part of and delete it
-        const deletedGame = await Game.findOneAndDelete({
+        // Find the game that the user is part of
+        const game = await Game.findOne({
             'players.userId': currentPlayerId,
-            status: { $in: ['pending', 'ongoing'] },
+            code: code,
+            status: { $in: ['pending', 'ongoing', 'completed'] },
         });
 
-        if (!deletedGame) {
+        if (!game) {
             return res.status(404).json({
                 success: false,
-                message: 'Game not found',
+                message: 'Game not found or you are not authorized to revoke it',
             });
         }
+
+        // Check if the user is a player in the game
+        const playerIndex = game.players.findIndex(player => player.userId.toString() === currentPlayerId.toString());
+        if (playerIndex === -1) {
+            return res.status(403).json({
+                success: false,
+                message: 'You are not authorized to revoke this game',
+            });
+        }
+
+        // Delete the game
+        await Game.deleteOne({ _id: game._id });
 
         res.status(200).json({
             success: true,
             message: 'Game deleted successfully',
-            deletedGame,
+            deletedGame: game,
         });
     } catch (error) {
         console.error(error);

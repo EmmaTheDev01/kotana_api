@@ -5,7 +5,6 @@ import {
   createGame,
   getAvailableGames,
   updateScore,
-  getGameDetails,
   joinGameWithCode,
   revokeGame,
 } from '../controllers/gameController.js'; // Adjust the path based on your project structure
@@ -21,7 +20,6 @@ router.post('/create', createGame);
 router.get('/available', getAvailableGames);
 router.put('/join/:code', joinGameWithCode);
 router.put('/score/:code', updateScore);
-router.get('/:id', getGameDetails);
-router.delete('/delete/:id', revokeGame);
+router.delete('/delete/:code', revokeGame);
 
 export default router;
